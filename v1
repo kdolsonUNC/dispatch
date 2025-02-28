@@ -1,31 +1,30 @@
-import dash
-import dash.dcc as dcc
-import dash.html as html
-import dash_leaflet as dl
-from dash.dependencies import Input, Output
-import os
+import React from "react";
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import "leaflet/dist/leaflet.css";
 
-app = dash.Dash(__name__)
-server = app.server  # Expose server for gunicorn
+const Dashboard = () => {
+  const mapCenter = [37.7749, -122.4194];
 
-map_center = [37.7749, -122.4194]
+  return (
+    <div className="grid grid-cols-2 gap-4 p-4 h-screen">
+      {/* Placeholder Divs */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {[...Array(3)].map((_, index) => (
+          <div key={index} className="w-full h-60 bg-gray-300"></div>
+        ))}
+      </div>
+      
+      {/* Map Widget */}
+      <div className="h-full w-full">
+        <MapContainer center={mapCenter} zoom={10} style={{ height: "100%", width: "100%" }}>
+          <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+          <Marker position={mapCenter}>
+            <Popup>Dashboard Map Location</Popup>
+          </Marker>
+        </MapContainer>
+      </div>
+    </div>
+  );
+};
 
-app.layout = html.Div([
-    html.Div([
-        html.Div(style={"width": "100%", "height": "200px", "backgroundColor": "#ccc"})
-        for _ in range(3)
-    ], style={"display": "flex", "gap": "10px"}),
-    
-    html.Div([
-        dl.Map(
-            [
-                dl.TileLayer(url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"),
-                dl.Marker(position=map_center, children=[dl.Popup("Dashboard Map Location")])
-            ],
-            center=map_center, zoom=10, style={"width": "100%", "height": "500px"}
-        )
-    ], style={"marginTop": "20px"})
-])
-
-if __name__ == '__main__':
-    app.run_server(debug=False, host="0.0.0.0", port=int(os.environ.get("PORT", 8050)))
+export default Dashboard;
